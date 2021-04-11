@@ -57,7 +57,7 @@ def register():
         login_user(new_user)
         return redirect(url_for("index"))
 
-    return render_template("register.html", form=form, errors=[None])
+    return render_template("register.html", form=form, errors=none)
 
     pass
 
@@ -74,7 +74,7 @@ def login():
         return render_template("login.html", form=form, errors=["Login or password doesn't match"])
     # if request.args.get("alt"):
     #     return render_template("login_alt.html", form=form, errors=[None])
-    return render_template("login.html", form=form, errors=[None])
+    return render_template("login.html", form=form, errors=None)
 
 
 @app.route('/logout')
