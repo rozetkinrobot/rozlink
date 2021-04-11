@@ -57,7 +57,7 @@ def register():
         login_user(new_user)
         return redirect(url_for("index"))
 
-    return render_template("register.html", form=form, errors=none)
+    return render_template("register.html", form=form, errors=None)
 
     pass
 
