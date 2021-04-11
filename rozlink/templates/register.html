@@ -1,0 +1,84 @@
+{% extends "base.html" %} {% block title %} Register {% endblock %} {% block content %}
+<div class="columns">
+    <div class="login column is-4 ">
+        <section class="section">
+            <div class="has-text-centered">
+                <img class="login-logo" src="{{ url_for('static', filename='img/rozlink_logo1.png') }}">
+            </div>
+            {% if errors %} {% for error in errors %}
+            <article class="message is-danger">
+                <div class="message-header">
+                    <p>Error</p>
+                    <button class="delete" aria-label="delete"></button>
+                </div>
+                <div class="message-body">
+                    {{ error }}
+                </div>
+            </article>
+            {% endfor %} {% endif %}
+            <form action="/register" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="field">
+                    {{ form.login.label(class_="label") }}
+                    <div class="control has-icons-left">
+                        {{ form.login(class_="input") }}
+                        <span class="icon is-small is-left">
+                            <i class="fa fa-user"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    {{ form.email.label(class_="label") }}
+                    <div class="control has-icons-left">
+                        {{ form.email(class_="input") }}
+                        <span class="icon is-small is-left">
+                            <i class="fa fa-envelope"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    {{ form.password.label(class_="label") }}
+                    <div class="control">
+                        <div class="field has-addons">
+                            <div class="control has-icons-left is-expanded">
+                                {{ form.password(class_="input") }}
+                                <span class="icon is-small is-left">
+                                    <i class="fa fa-key"></i>
+                                </span>
+                            </div>
+                            <p class="control">
+                                <button class="button fas fa-eye fav-icon toggle-pass" type="button"></button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    {{ form.password2.label(class_="label") }}
+                    <div class="control has-icons-left">
+                        {{ form.password2(class_="input") }}
+                        <span class="icon is-small is-left">
+                            <i class="fa fa-key"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    {{ form.submit(class_="button is-vcentered is-primary is-outlined is-link") }}
+                </div>
+                <div class="has-text-centered">
+                    <a href="{{ url_for('register') }}"> Don't you have an account?</a>
+                </div>
+            </form>
+        </section>
+    </div>
+    <div id="particles-js" class="interactive-bg column is-8">
+    </div>
+</div>
+{% endblock %} {% block js_scripts %}
+<script src="static/js/particles-min.js"></script>
+<script src="static/js/p-config.js"></script>
+<script src="static/js/messages.js"></script>
+{% endblock %}

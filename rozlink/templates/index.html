@@ -1,0 +1,52 @@
+{% extends "base.html" %} {% block title %} Rozetkin Link Shorter {% endblock %} {% block content %}
+<section class="hero is-fullheight is-bold" id="particles-js">
+    <div class="hero-body">
+        <div class="box container has-text-centered">
+            <h1 class="title is-size-1-desktop is-size-2-touch is-uppercase">Get your short link now!</h1>
+            <form action="/" method="post">
+                {{ form.hidden_tag() }}
+                <div class="field">
+                    <div class="control">
+                        <div class="field has-addons">
+                            <div class="control is-expanded">
+                                {{ form.link(class_="input", placeholder="https://example.com") }}
+                                <span class="icon is-small is-left">
+                                    <i class="fa fa-arrow"></i>
+                                </span>
+                            </div>
+                            <p class="control">
+                                <button class="button fas fa-arrow-right fav-icon" type="submit"></button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            {% if errors %} {% for error in errors %}
+            <article class="message is-danger">
+                <div class="message-header">
+                    <p>Error</p>
+                    <button class="delete" aria-label="delete"></button>
+                </div>
+                <div class="message-body">
+                    {{ error }}
+                </div>
+            </article>
+            {% endfor %} {% endif %} {% if reslink %}
+            <article class="message is-success">
+                <div class="message-header">
+                    <p>Success</p>
+                    <button class="delete" aria-label="delete"></button>
+                </div>
+                <div class="message-body">
+                    <a href="http://rozlink.cf/{{ reslink }}">http://rozlink.cf/{{ reslink }}</a>
+                </div>
+            </article>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}{% block js_scripts %}
+<script src="static/js/particles-min.js"></script>
+<script src="static/js/p-config.js"></script>
+<script src="static/js/messages.js"></script>
+{% endblock %}

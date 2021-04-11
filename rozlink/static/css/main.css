@@ -1,0 +1,67 @@
+.interactive-bg {
+    min-height: 100vh;
+    background-color: hsl(229, 53%, 53%);
+    -webkit-box-shadow: inset 24px 4px 64px -24px rgba(71, 71, 71, 1);
+    -moz-box-shadow: inset 24px 4px 64px -24px rgba(71, 71, 71, 1);
+    box-shadow: inset 24px 4px 64px -24px rgba(71, 71, 71, 1);
+    padding: 0px;
+    /* position: absolute; */
+}
+
+@media (max-width: 769px) {
+    .interactive-bg {
+        display: none
+    }
+}
+
+.fav-icon {
+    pointer-events: all;
+    cursor: pointer
+}
+
+
+/* .pass-button {
+    border-radius: 30px;
+} */
+
+.input {
+    border-radius: 30px;
+}
+
+.button {
+    /* margin-top: 20px;
+    margin-bottom: 20px;
+    min-width: 150px; */
+    border-radius: 30px;
+}
+
+
+/* .box-label {
+    flex-basis: auto;
+    flex-direction: column;
+} */
+
+.login-logo {
+    margin: 0 auto;
+    margin-bottom: 50px;
+    max-height: 100px;
+}
+
+.columns {
+    margin: 0px;
+}
+
+.hero.is-primary.is-bold#particles-js {
+    background: transparent;
+}
+
+
+/* Particles JS */
+
+#particles-js canvas {
+    position: absolute;
+    height: 100vh;
+    z-index: -1;
+    background-color: hsl(229, 53%, 53%);
+    /* background-image: linear-gradient(141deg, #090808 0%, #222 71%, #312d2c 100%); */
+}
