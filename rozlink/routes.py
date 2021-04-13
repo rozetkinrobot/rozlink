@@ -15,7 +15,7 @@ def index():
 
     if form.validate_on_submit():
         large_link = form.link.data
-        if not large_link.startswith("http"):
+        if  "://" not in large_link:
             large_link = "http://" + large_link
         if large_link:
             dblink = Link.query.filter_by(large_link=large_link).first()

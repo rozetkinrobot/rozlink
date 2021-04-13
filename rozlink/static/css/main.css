@@ -6,6 +6,11 @@
     box-shadow: inset 24px 4px 64px -24px rgba(71, 71, 71, 1);
     padding: 0px;
     /* position: absolute; */
+    height: 100vh;
+}
+
+.footer {
+    padding: 3rem 1.5rem 3rem;
 }
 
 @media (max-width: 769px) {

@@ -1,2 +1,6 @@
 netaddr
 email_validator
+flask_sqlalchemy
+flask
+flask_login
+flask_wtf
