@@ -1,10 +1,11 @@
-<nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+<nav class="navbar is-fixed-top">
     <div class="navbar-brand">
-        <a class="navbar-item" href="{{ url_for('index')}}">
+        <a class="navbar-item" href="{{ url_for('index') }}">
             <img src="{{ url_for('static', filename='img/rozlink_logo1.png') }}" width="112" height="100px">
         </a>
 
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+            data-target="navbarBasicExample">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
@@ -13,57 +14,48 @@
 
     <div id="navbar" class="navbar-menu">
         <div class="navbar-start">
-            <a class="navbar-item">
-                Home
+            <a class="navbar-item" href="{{ url_for('index') }}">
+                <span class="icon icon is-left">
+                    <i class="fa fa-link"></i>
+                </span>
+                <span>Create</span>
             </a>
 
-            <a class="navbar-item">
-                Documentation
-            </a>
+        </div>
+        {% block navbar_start %}
+        {% endblock %}
 
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
-                    More
+        <div class="navbar-end">
+            {% block navbar_end %}
+            {% endblock %}
+
+            {% if current_user.is_authenticated %}
+            <div class="navbar-item has-dropdown is-hoverable is-info">
+                <a class="navbar-link has-icons-left">
+                    <span class="icon is-left">
+                        <i class="fa fa-user"></i>
+                    </span>
+                    <span>{{ current_user.login }}</span>
                 </a>
 
                 <div class="navbar-dropdown">
-                    <a class="navbar-item">
-                        About
-                    </a>
-                    <a class="navbar-item">
-                        Jobs
-                    </a>
-                    <a class="navbar-item">
-                        Contact
-                    </a>
-                    <hr class="navbar-divider">
-                    <a class="navbar-item">
-                        Report an issue
-                    </a>
+                    <a class="navbar-item" href="/profile">Profile</a>
+                    <a class="navbar-item" href="{{ url_for('logout') }}">Log Out</a>
                 </div>
             </div>
-        </div>
-
-        <div class="navbar-end">
+            {% else %}
             <div class="navbar-item">
-
-                <div class="buttons">
-                    {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('index') }}">
-                        <strong>Hi, {{ current_user.login }}</strong>
+                <div class="buttons ">
+                    <a href="{{ url_for('register') }}" class="button is-primary is-link">
+                        <strong>Sign Up</strong>
                     </a>
-                    <a class="button is-primary is-link" href="{{ url_for('logout') }}">
-                        <strong>Log out</strong>
-                    </a>
-                    {% else %}
-                    <a class="button is-primary is-link" href="{{ url_for('register') }}">
-                        <strong>Sign up</strong>
-                    </a>
-                    <a class="button is-light" href="{{ url_for('login') }}">
+                    <a href="{{ url_for('login') }}" class="button is-light">
                         Log in
-                    </a> {% endif %}
+                    </a>
                 </div>
             </div>
+            {% endif %}
         </div>
+    </div>
     </div>
 </nav>

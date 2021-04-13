@@ -47,7 +47,7 @@
     </div>
 </section>
 {% endblock %}{% block js_scripts %}
-<script src="static/js/particles-min.js"></script>
-<script src="static/js/p-config.js"></script>
-<script src="static/js/messages.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/particles-min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/p-config.js') }}"></script>
 {% endblock %}

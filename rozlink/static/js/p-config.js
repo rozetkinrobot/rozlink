@@ -1,7 +1,7 @@
 var partJson = {
     "particles": {
         "number": {
-            "value": 150,
+            "value": 10,
             "density": {
                 "enable": true,
                 "value_area": 800
@@ -82,7 +82,7 @@ var partJson = {
         },
         "modes": {
             "grab": {
-                "distance": 400,
+                "distance": 200,
                 "line_linked": {
                     "opacity": 1
                 }
@@ -110,6 +110,6 @@ var partJson = {
 };
 var jsonUri = "data:text/plain;base64," + window.btoa(JSON.stringify(partJson));
 /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
-particlesJS.load('particles-js', jsonUri, function() {
+particlesJS.load('particles-js', jsonUri, function () {
     console.log('callback - particles.js config loaded');
 });
