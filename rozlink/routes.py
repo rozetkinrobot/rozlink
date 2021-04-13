@@ -48,7 +48,7 @@ def register():
         reg_user = User.query.filter_by(login=form.login.data).first()
         reg_user1 = User.query.filter_by(email=form.email.data).first()
         if reg_user or reg_user1:
-            return render_template("register_alt.html", form=form, errors=["User already exists"])
+            return render_template("register.html", form=form, errors=["User already exists"])
         new_user = User(login=form.login.data, email=form.email.data)
         new_user.set_password(form.password.data)
         db.session.add(new_user)
