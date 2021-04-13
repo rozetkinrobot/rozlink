@@ -1,7 +1,7 @@
 from rozlink import app, db
 import netaddr
 import os
-from flask import request, redirect, abort, render_template, url_for, send_from_directory
+from flask import request, redirect, abort, render_template, url_for, send_from_directory, session, jsonify
 from flask_login import login_user, login_required, logout_user, current_user
 from rozlink.forms import LoginForm, RegisterForm, LinkForm
 from rozlink.models import User, Link, View
@@ -15,17 +15,21 @@ def index():
 
     if form.validate_on_submit():
         large_link = form.link.data
-        if  "://" not in large_link:
-            large_link = "http://" + large_link
         if large_link:
-            dblink = Link.query.filter_by(large_link=large_link).first()
-            if not dblink:
-                short_link = create_unique_link()
-                dblink = Link(large_link=large_link, short_link=short_link)
-                db.session.add(dblink)
-                db.session.commit()
-            print("success")
+            if "://" not in large_link:
+                large_link = "http://" + large_link
+            short_link = create_unique_link()
+            dblink = Link(large_link=large_link, short_link=short_link)
+            db.session.add(dblink)
+            db.session.commit()
+
+            if not current_user.is_authenticated:
+                links = session.get("links", [])
+                links.append(dblink.short_link)
+                session["links"] = links
+
             return render_template("index.html", form=form, reslink=dblink.short_link)
+        return render_template("index.html", form=form, reslink=None, errors=["URL lenght must not be 0..."])
     return render_template('index.html', form=form, reslink=None, errors=None)
 
 
@@ -51,15 +55,21 @@ def register():
             return render_template("register.html", form=form, errors=["User already exists"])
         new_user = User(login=form.login.data, email=form.email.data)
         new_user.set_password(form.password.data)
+        links = session.get("links", [])
+        for link in links:
+            dblink = Link.query.filter_by(short_link=link).first()
+            if dblink.user_id is None:
+                new_user.links.append(dblink)
+        session["links"] = []
+
         db.session.add(new_user)
         db.session.commit()
 
         login_user(new_user)
+
         return redirect(url_for("index"))
 
     return render_template("register.html", form=form, errors=None)
-
-    pass
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -69,12 +79,27 @@ def login():
         log_user = User.query.filter_by(login=form.login.data).first()
         if log_user:
             if log_user.check_password(form.password.data):
+                links = session.get("links", [])
+                for link in links:
+                    dblink = Link.query.filter_by(short_link=link).first()
+                    if dblink.user_id is None:
+                        log_user.links.append(dblink)
+                session["links"] = []
+                db.session.add(log_user)
+                db.session.commit()
+
                 login_user(log_user, remember=form.remember_me.data)
                 return redirect(url_for("index"))
-        return render_template("login.html", form=form, errors=["Login or password doesn't match"])
-    # if request.args.get("alt"):
-    #     return render_template("login_alt.html", form=form, errors=[None])
+        return render_template("login.html", form=form, errors=["Login and password doesn't match"])
     return render_template("login.html", form=form, errors=None)
+
+
+@login_required
+@app.route('/profile')
+def profile():
+    all_links = Link.query.filter_by(user_id=current_user.id).all()
+    all_js_links = [link.toJson() for link in all_links]
+    return jsonify(all_js_links)
 
 
 @app.route('/logout')
