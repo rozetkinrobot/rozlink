@@ -107,7 +107,6 @@ def login():
 
                 login_user(log_user, remember=form.remember_me.data)
                 return redirect_dest(fallback=url_for('index'))
-                # return redirect(next_url or url_for('index'))
         return render_template("login.html", form=form, errors=["Login and password doesn't match"])
     return render_template("login.html", form=form, errors=None)
 
@@ -142,5 +141,9 @@ def favicon():
 
 @login_manager.unauthorized_handler
 def handle_needs_login():
-    # flash("You have to be logged in to access this page.")
     return redirect(url_for('login', next=request.endpoint))
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
