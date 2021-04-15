@@ -1,6 +1,6 @@
 {% extends"base.html" %} {% block title %} Login {% endblock %} {% block content %}
-<div class="columns">
-    <div class=" login column is-4">
+<div class="columns has-interactive-bg">
+    <div class="login column is-4">
         <section class=" section">
             <div class="has-text-centered">
                 <img class="login-logo" src="{{ url_for( 'static', filename='img/rozlink_logo1.png' ) }}">
@@ -16,7 +16,7 @@
                 </div>
             </article>
             {% endfor %} {% endif %}
-            <form action="/login" method="post" novalidate>
+            <form action="{{ url_for('login', next=request.args.get('next')) }}" method="post" novalidate>
                 {{ form.hidden_tag() }}
 
                 <div class="field">
@@ -55,7 +55,7 @@
                     {{ form.submit(class_="button is-vcentered is-primary is-outlined is-link") }}
                 </div>
                 <div class="has-text-centered">
-                    <a href="{{ url_for( 'register') }}"> Don't you have an account?</a>
+                    <a href="{{ url_for('register', next=request.args.get('next')) }}"> Don't you have an account?</a>
                 </div>
             </form>
         </section>

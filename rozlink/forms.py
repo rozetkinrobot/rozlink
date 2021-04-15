@@ -19,7 +19,7 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(),  Length(min=4), EqualTo('password2',
                                                                                              message='Passwords must match')])
     password2 = PasswordField('Repeat password', validators=[DataRequired()])
-    submit = SubmitField('Sign In')
+    submit = SubmitField('Sign Up')
 
 
 class LinkForm(FlaskForm):

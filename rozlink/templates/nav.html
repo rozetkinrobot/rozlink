@@ -4,8 +4,7 @@
             <img src="{{ url_for('static', filename='img/rozlink_logo1.png') }}" width="112" height="100px">
         </a>
 
-        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
-            data-target="navbarBasicExample">
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
@@ -22,14 +21,10 @@
             </a>
 
         </div>
-        {% block navbar_start %}
-        {% endblock %}
+        {% block navbar_start %} {% endblock %}
 
         <div class="navbar-end">
-            {% block navbar_end %}
-            {% endblock %}
-
-            {% if current_user.is_authenticated %}
+            {% block navbar_end %} {% endblock %} {% if current_user.is_authenticated %}
             <div class="navbar-item has-dropdown is-hoverable is-info">
                 <a class="navbar-link has-icons-left">
                     <span class="icon is-left">

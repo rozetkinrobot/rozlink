@@ -1,12 +1,24 @@
-from rozlink import app, db
+from rozlink import app, db, login_manager
 import netaddr
 import os
 from flask import request, redirect, abort, render_template, url_for, send_from_directory, session, jsonify
 from flask_login import login_user, login_required, logout_user, current_user
 from rozlink.forms import LoginForm, RegisterForm, LinkForm
 from rozlink.models import User, Link, View
-from rozlink.utils.links import create_unique_link
+from rozlink.utils.links import create_unique_link, is_safe_url
 from rozlink.utils.views import ip2int
+
+
+def redirect_dest(fallback):
+    dest = request.args.get('next')
+    if is_safe_url(dest):
+        try:
+
+            dest_url = url_for(dest)
+        except:
+            return redirect(fallback)
+        return redirect(dest_url)
+    return redirect(fallback)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -19,14 +31,17 @@ def index():
             if "://" not in large_link:
                 large_link = "http://" + large_link
             short_link = create_unique_link()
-            dblink = Link(large_link=large_link, short_link=short_link)
-            db.session.add(dblink)
-            db.session.commit()
 
-            if not current_user.is_authenticated:
+            dblink = Link(large_link=large_link, short_link=short_link)
+            if current_user.is_authenticated:
+                current_user.links.append(dblink)
+                db.session.add(current_user)
+            else:
                 links = session.get("links", [])
                 links.append(dblink.short_link)
                 session["links"] = links
+                db.session.add(dblink)
+            db.session.commit()
 
             return render_template("index.html", form=form, reslink=dblink.short_link)
         return render_template("index.html", form=form, reslink=None, errors=["URL lenght must not be 0..."])
@@ -37,7 +52,8 @@ def index():
 def short_link_redir(short_link):
     dblink = Link.query.filter_by(short_link=short_link).first()
     if dblink:
-        new_view = View(ip_address=ip2int(request.remote_addr))
+        new_view = View(ip_address=ip2int(
+            request.environ.get('HTTP_X_REAL_IP', request.remote_addr)))
         dblink.views.append(new_view)
         db.session.add(dblink)
         db.session.commit()
@@ -67,7 +83,7 @@ def register():
 
         login_user(new_user)
 
-        return redirect(url_for("index"))
+        return redirect_dest(fallback=url_for('index'))
 
     return render_template("register.html", form=form, errors=None)
 
@@ -89,17 +105,27 @@ def login():
                 db.session.commit()
 
                 login_user(log_user, remember=form.remember_me.data)
-                return redirect(url_for("index"))
+                return redirect_dest(fallback=url_for('index'))
+                # return redirect(next_url or url_for('index'))
         return render_template("login.html", form=form, errors=["Login and password doesn't match"])
     return render_template("login.html", form=form, errors=None)
 
 
-@login_required
 @app.route('/profile')
+@login_required
 def profile():
-    all_links = Link.query.filter_by(user_id=current_user.id).all()
-    all_js_links = [link.toJson() for link in all_links]
-    return jsonify(all_js_links)
+    # all_links = Link.query.filter_by(user_id=current_user.id).all()
+    # all_js_links = [link.toJson() for link in all_links]
+    # return jsonify(all_js_links)
+    links = current_user.links.all()
+    total_links = len(links)
+    total_views = 0
+    # views = []
+    for link in links:
+        # views += link.views
+        total_views += link.views_num
+    # ips =
+    return render_template("profile.html", links=links, total_links=total_links, total_views=total_views)
 
 
 @app.route('/logout')
@@ -112,3 +138,9 @@ def logout():
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/img/'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
+@login_manager.unauthorized_handler
+def handle_needs_login():
+    # flash("You have to be logged in to access this page.")
+    return redirect(url_for('login', next=request.endpoint))

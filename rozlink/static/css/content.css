@@ -9,6 +9,6 @@ body>footer {
     margin-top: auto;
 }
 
-.columns:not(:last-child) {
+.has-interactive-bg.columns:not(:last-child) {
     margin-bottom: 0;
 }

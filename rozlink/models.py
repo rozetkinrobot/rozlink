@@ -23,9 +23,10 @@ class Link(db.Model):
     views_num = db.Column(db.Integer, default=0)
     views = db.relationship("View", backref="link", lazy="dynamic")
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def toJson(self):
-        return {"id": self.id, "ll": self.large_link, "sl": self.short_link, "views": [view.toJson() for view in self.views], "user_id": self.user_id}
+        return {"id": self.id, "ll": self.large_link, "sl": self.short_link, "views": [view.toJson() for view in self.views], "user_id": self.user_id, "time": self.time}
 
 
 class User(UserMixin, db.Model):
@@ -35,6 +36,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     links = db.relationship("Link", backref="user", lazy="dynamic")
+    time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def check_password(self, password):
         return check_password_hash(self.password, password)

@@ -1,7 +1,7 @@
 var partJson = {
     "particles": {
         "number": {
-            "value": 10,
+            "value": 100,
             "density": {
                 "enable": true,
                 "value_area": 800
@@ -110,6 +110,6 @@ var partJson = {
 };
 var jsonUri = "data:text/plain;base64," + window.btoa(JSON.stringify(partJson));
 /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
-particlesJS.load('particles-js', jsonUri, function () {
+particlesJS.load('particles-js', jsonUri, function() {
     console.log('callback - particles.js config loaded');
 });
