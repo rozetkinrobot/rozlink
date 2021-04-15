@@ -50,7 +50,8 @@ def index():
 
 @app.route('/<short_link>')
 def short_link_redir(short_link):
-    dblink = Link.query.filter_by(short_link=short_link).first()
+    dblink = Link.query.filter_by(
+        short_link=short_link, is_active=True).first()
     if dblink:
         new_view = View(ip_address=ip2int(
             request.environ.get('HTTP_X_REAL_IP', request.remote_addr)))
@@ -114,17 +115,11 @@ def login():
 @app.route('/profile')
 @login_required
 def profile():
-    # all_links = Link.query.filter_by(user_id=current_user.id).all()
-    # all_js_links = [link.toJson() for link in all_links]
-    # return jsonify(all_js_links)
     links = current_user.links.all()
     total_links = len(links)
     total_views = 0
-    # views = []
     for link in links:
-        # views += link.views
-        total_views += link.views_num
-    # ips =
+        total_views += len(link.views.all())
     return render_template("profile.html", links=links, total_links=total_links, total_views=total_views)
 
 

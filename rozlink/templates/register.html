@@ -16,7 +16,7 @@
                 </div>
             </article>
             {% endfor %} {% endif %}
-            <form action="{{ url_for('register', next=request.args.get('next')) }}" method="post" novalidate>
+            <form action="{{ url_for('register', next=request.args.get('next')) }}" method="post">
                 {{ form.hidden_tag() }}
                 <div class="field">
                     {{ form.login.label(class_="label") }}
@@ -31,7 +31,7 @@
                 <div class="field">
                     {{ form.email.label(class_="label") }}
                     <div class="control has-icons-left">
-                        {{ form.email(class_="input") }}
+                        {{ form.email(class_="input", type="email") }}
                         <span class="icon is-small is-left">
                             <i class="fa fa-envelope"></i>
                         </span>

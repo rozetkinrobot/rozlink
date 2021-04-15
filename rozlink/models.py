@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from rozlink import db, login_manager
+from rozlink import app, db, login_manager
 from rozlink.utils.views import int2ip
 import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -20,13 +20,13 @@ class Link(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     large_link = db.Column(db.String(1024))
     short_link = db.Column(db.String(256))
-    views_num = db.Column(db.Integer, default=0)
+    is_active = db.Column(db.Boolean, default=True)
     views = db.relationship("View", backref="link", lazy="dynamic")
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def toJson(self):
-        return {"id": self.id, "ll": self.large_link, "sl": self.short_link, "views": [view.toJson() for view in self.views], "user_id": self.user_id, "time": self.time}
+        return {"id": self.id, "ll": self.large_link, "sl": app.config["SERVER_URI"] + "/" + self.short_link, "views": [view.toJson() for view in self.views], "user_id": self.user_id, "time": self.time, "is_active": self.is_active}
 
 
 class User(UserMixin, db.Model):
