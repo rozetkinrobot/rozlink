@@ -29,7 +29,7 @@ def index():
         large_link = form.link.data
         if large_link:
             if "://" not in large_link:
-                large_link = "http://" + large_link
+                large_link = "https://" + large_link
             short_link = create_unique_link()
 
             dblink = Link(large_link=large_link, short_link=short_link)
@@ -118,9 +118,14 @@ def profile():
     links = current_user.links.all()
     total_links = len(links)
     total_views = 0
+    ips = []
     for link in links:
         total_views += len(link.views.all())
-    return render_template("profile.html", links=links, total_links=total_links, total_views=total_views)
+        for view in link.views.all():
+            ips.append(view.ip_address)
+    unique_ips = len(list(set(ips)))
+
+    return render_template("profile.html", links=links, total_links=total_links, total_views=total_views, unique_ips=unique_ips)
 
 
 @app.route('/logout')
