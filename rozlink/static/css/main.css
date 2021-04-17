@@ -59,8 +59,13 @@
 .content p:not(:last-child){
     margin: 0;
 }
-.is-right-content{
-    justify-content: right;
+
+.grecaptcha-badge { 
+    visibility: hidden;
+}
+
+.is-horizontal-center {
+    justify-content: center;
 }
 
 .hero.is-primary.is-bold#particles-js {

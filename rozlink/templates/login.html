@@ -5,8 +5,8 @@
             <div class="content has-text-centered">
                 <h1 class="title is-1">Login</h1>
             </div>
-            {% if errors %}
-            <div class="content">
+            <div class="content" id="error-messages">
+                {% if errors %}
                 {% for error in errors %}
                 <article class="message is-danger">
                     <div class="message-header">
@@ -18,10 +18,11 @@
                     </div>
                 </article>
                 {% endfor %}
+                {% endif %}
             </div>
-            {% endif %}
-            <form action="{{ url_for('login', next=request.args.get('next')) }}" method="post" novalidate>
+            <form action="{{ url_for('login', next=request.args.get('next')) }}" id="login-form" method="post">
                 {{ form.hidden_tag() }}
+                {{ form.recaptcha }}
 
                 <div class="field">
                     {{ form.login.label(class_="label") }}
@@ -54,10 +55,11 @@
                     {{ form.remember_me(class_="checkbox") }}
                 </label>
 
-
                 <div class="field">
-                    {{ form.submit(class_="button is-vcentered is-primary is-outlined is-link") }}
+                    <button class="button is-vcentered is-primary is-outlined is-link is-submit" id="submit-button">Sign
+                        In</button>
                 </div>
+
                 <div class="has-text-centered">
                     <a href="{{ url_for('register', next=request.args.get('next')) }}"> Don't you have an account?</a>
                 </div>
@@ -68,6 +70,18 @@
     </div>
 </div>
 {% endblock %} {% block js_scripts %}
+<script>
+    function onSubmitCallback(token) {
+        var form = $("#login-form");
+        if (form[0].checkValidity()) {
+            form.submit();
+        }
+        else {
+            var error_div = $("#error-messages")
+            error_div.append("<article class='message is-danger'><div class='message-header'><p>Error</p><button class='delete' aria-label='delete'></button></div><div class='message-body'>You must fill out all fields</div></article>")
+        }
+    }
+</script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script src="{{ url_for('static', filename='js/particles-min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/p-config.js') }}"></script>

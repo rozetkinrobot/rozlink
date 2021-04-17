@@ -4,8 +4,9 @@
     <div class="hero-body">
         <div class="box container has-text-centered">
             <h1 class="title is-size-1-desktop is-size-2-touch is-uppercase">Get your short link now!</h1>
-            <form action="/" method="post">
+            <form action="/" id="link-form" method="post">
                 {{ form.hidden_tag() }}
+                {{ form.recaptcha }}
                 <div class="field">
                     <div class="control">
                         <div class="field has-addons">
@@ -16,10 +17,14 @@
                                 </span>
                             </div>
                             <p class="control">
-                                <button class="button fas fa-arrow-right fav-icon" type="submit"></button>
+                                <button class="button fas fa-arrow-right fav-icon" id="submit-button"></button>
                             </p>
                         </div>
                     </div>
+                    <small>This site is protected by reCAPTCHA and the Google
+                        <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+                        <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+                    </small>
                 </div>
             </form>
             {% if errors %} {% for error in errors %}
@@ -40,7 +45,7 @@
                 </div>
                 <div class="message-body">
                     <a href="{{ config.SERVER_URI + '/' + reslink }}">{{ config.SERVER_URI + '/' + reslink }}</a>
-                    <div class="content">
+                    <div class="content is-horizontal-center is-flex">
                         <figure class="image is-128x128">
                             <img
                                 src="https://api.qrserver.com/v1/create-qr-code/?size=128x128&data={{ config.SERVER_URI + '/' + reslink }}">
@@ -53,6 +58,11 @@
     </div>
 </section>
 {% endblock %}{% block js_scripts %}
+<script>
+    function onSubmitCallback(token) {
+        document.getElementById("link-form").submit();
+    }
+</script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script src="{{ url_for('static', filename='js/particles-min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/p-config.js') }}"></script>

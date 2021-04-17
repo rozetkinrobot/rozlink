@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
+from flask_wtf.recaptcha import RecaptchaField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
-# from wtforms.widgets import PasswordInput
 
 
 class BaseForm(FlaskForm):
@@ -18,7 +18,7 @@ class LoginForm(BaseForm):
     login = StringField('Login', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign In')
+    recaptcha = RecaptchaField()
 
 
 class RegisterForm(BaseForm):
@@ -29,7 +29,7 @@ class RegisterForm(BaseForm):
     password = PasswordField('Password', validators=[DataRequired(),  Length(min=4), EqualTo('password2',
                                                                                              message='Passwords must match')])
     password2 = PasswordField('Repeat password', validators=[DataRequired()])
-    submit = SubmitField('Sign Up')
+    recaptcha = RecaptchaField()
 
 
 class ChangePassForm(BaseForm):
@@ -38,9 +38,9 @@ class ChangePassForm(BaseForm):
                                                                                                  message='New passwords must match')])
     password2 = PasswordField('Repeat new password',
                               validators=[DataRequired()])
-    submit = SubmitField('Sign Up')
+    recaptcha = RecaptchaField()
 
 
 class LinkForm(BaseForm):
     link = StringField('link', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    recaptcha = RecaptchaField()

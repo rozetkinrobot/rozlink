@@ -102,7 +102,6 @@ def change_password():
         db.session.commit()
 
         return redirect_dest(fallback=url_for('index'))
-    print(form.errors.values(), form.errors, form.error_list)
     return render_template("change_password.html", form=form, errors=form.error_list)
 
 
