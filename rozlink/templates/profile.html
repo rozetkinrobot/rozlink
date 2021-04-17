@@ -53,7 +53,7 @@
                         <table class="table is-fullwidth is-striped is-hoverable">
                             <tbody>
                                 {% for link in links %}
-                                <tr>
+                                <tr id="link-id-{{ link.id }}">
                                     <td width="5%"><i class="fa fa-link"></i></td>
                                     <td>
                                         <a
@@ -123,6 +123,11 @@
                                             </div>
                                         </div>
                                         <div class="field">
+                                            <label class="label">QR code</label>
+                                            <img class="image is-128x128" src="" alt="QR code" id="qr_code">
+                                        </div>
+
+                                        <div class="field">
                                             <label class="label">Views</label>
                                             <div class="control">
                                                 <div class="table-container">
@@ -145,6 +150,7 @@
                                 </section>
                                 <footer class="modal-card-foot">
                                     <button class="button is-link">Ok</button>
+                                    <button class="button is-danger" id="delete_link_button">Delete link</button>
                                 </footer>
                             </div>
 

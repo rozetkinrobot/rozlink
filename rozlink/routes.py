@@ -3,7 +3,7 @@ import netaddr
 import os
 from flask import request, redirect, abort, render_template, url_for, send_from_directory, session, jsonify
 from flask_login import login_user, login_required, logout_user, current_user
-from rozlink.forms import LoginForm, RegisterForm, LinkForm
+from rozlink.forms import LoginForm, RegisterForm, LinkForm, ChangePassForm
 from rozlink.models import User, Link, View
 from rozlink.utils.links import create_unique_link, is_safe_url
 from rozlink.utils.views import ip2int
@@ -13,7 +13,6 @@ def redirect_dest(fallback):
     dest = request.args.get('next')
     if is_safe_url(dest):
         try:
-
             dest_url = url_for(dest)
         except:
             return redirect(fallback)
@@ -45,13 +44,13 @@ def index():
 
             return render_template("index.html", form=form, reslink=dblink.short_link)
         return render_template("index.html", form=form, reslink=None, errors=["URL lenght must not be 0..."])
-    return render_template('index.html', form=form, reslink=None, errors=None)
+    return render_template('index.html', form=form, reslink=None, errors=form.error_list)
 
 
 @app.route('/<short_link>')
 def short_link_redir(short_link):
     dblink = Link.query.filter_by(
-        short_link=short_link, is_active=True).first()
+        short_link=short_link, is_active=True, is_deleted=False).first()
     if dblink:
         new_view = View(ip_address=ip2int(
             request.environ.get('HTTP_X_REAL_IP', request.remote_addr)))
@@ -86,7 +85,25 @@ def register():
 
         return redirect_dest(fallback=url_for('index'))
 
-    return render_template("register.html", form=form, errors=None)
+    return render_template("register.html", form=form, errors=form.error_list)
+
+
+@app.route('/change_password', methods=["GET", "POST"])
+@login_required
+def change_password():
+    form = ChangePassForm(request.form)
+    if form.validate_on_submit():
+        if not current_user.check_password(form.old_password.data):
+            return render_template("change_password.html", form=form, errors=["Old password is wrong"])
+
+        current_user.set_password(form.password.data)
+
+        db.session.add(current_user)
+        db.session.commit()
+
+        return redirect_dest(fallback=url_for('index'))
+    print(form.errors.values(), form.errors, form.error_list)
+    return render_template("change_password.html", form=form, errors=form.error_list)
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -108,13 +125,13 @@ def login():
                 login_user(log_user, remember=form.remember_me.data)
                 return redirect_dest(fallback=url_for('index'))
         return render_template("login.html", form=form, errors=["Login and password doesn't match"])
-    return render_template("login.html", form=form, errors=None)
+    return render_template("login.html", form=form, errors=form.error_list)
 
 
 @app.route('/profile')
 @login_required
 def profile():
-    links = current_user.links.all()
+    links = current_user.links.filter_by(is_deleted=False).all()
     total_links = len(links)
     total_views = 0
     ips = []

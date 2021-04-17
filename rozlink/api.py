@@ -26,6 +26,8 @@ def link_info():
             link = Link.query.filter_by(id=link_id).first()
             if link.user_id != current_user.id:
                 return jsonify(get_error(403)), 403
+            if link.is_deleted:
+                return jsonify(get_error("Link deleted")), 403
             return get_success(link.toJson())
         except TypeError:
             return jsonify(get_error(400)), 400
@@ -49,10 +51,38 @@ def set_link_state():
             link = Link.query.filter_by(id=link_id).first()
             if link.user_id != current_user.id:
                 return jsonify(get_error(403)), 403
+            if link.is_deleted:
+                return jsonify(get_error("Link deleted")), 403
             link.is_active = state
             db.session.add(link)
             db.session.commit()
             return get_success({"is_active": int(link.is_active)})
+        except TypeError:
+            return jsonify(get_error(400)), 400
+        except AttributeError:
+            return jsonify(get_error(400)), 400
+        except KeyError:
+            return jsonify(get_error(400)), 400
+        except ValueError:
+            return jsonify(get_error(400)), 400
+
+    return jsonify(get_error(401)), 401
+
+
+@app.route('/api/v1/delete_link', methods=["POST"])
+def delete_link():
+    if current_user.is_authenticated:
+        data = request.json
+        try:
+            link_id = data["id"]
+            link = Link.query.filter_by(id=link_id).first()
+            if link.user_id != current_user.id:
+                return jsonify(get_error(403)), 403
+            link.is_deleted = True
+            link.is_active = False
+            db.session.add(link)
+            db.session.commit()
+            return get_success(None)
         except TypeError:
             return jsonify(get_error(400)), 400
         except AttributeError:

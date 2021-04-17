@@ -16,30 +16,20 @@ $(document).on('click', '.delete', function () {
     });
 });
 
-//pass toggle
-$(document).on('click', '.toggle-pass', function () {
-    const eye_pos = $(this).hasClass("fa-eye");
-    $(this).addClass(eye_pos == true ? "fa-eye-slash" : "fa-eye")
-    $(this).removeClass(eye_pos == true ? "fa-eye" : "fa-eye-slash")
-    const type = $("#password").attr('type');
-    $("#password").attr(
-        'type', type === 'password' ? 'text' : 'password');
-});
-
 var rootEl = document.documentElement;
 var $modals = getAll('.modal');
 var $modalButtons = getAll('.modal-button');
 var $modalCloses = getAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button');
 var $clipboardButtons = getAll('.clipboad-button');
+var $passButtons = getAll('.toggle-pass');
 
 if ($modalButtons.length > 0) {
-    $modalButtons.forEach(function ($el) {
-        $el.addEventListener('click', function () {
-            var target = $el.dataset.target;
-            if ($($el).hasClass("modal-link-button")) {
-                var link_id = $el.dataset.linkid;
+    $modalButtons.forEach(function (el) {
+        $(el).click(() => {
+            var target = el.dataset.target;
+            if ($(el).hasClass("modal-link-button")) {
+                var link_id = el.dataset.linkid;
                 prepareModal(target, link_id);
-                // openModal(target);
             }
             else {
                 openModal(target);
@@ -49,17 +39,26 @@ if ($modalButtons.length > 0) {
 }
 
 if ($clipboardButtons.length > 0) {
-    $clipboardButtons.forEach(function ($el) {
-        $el.addEventListener('click', function () {
-            var target = $el.dataset.target;
-            clipboard_click(target, $el);
+    $clipboardButtons.forEach(function (el) {
+        $(el).click(() => {
+            var target = el.dataset.target;
+            clipboard_click(target, el);
+        });
+    });
+}
+
+if ($passButtons.length > 0) {
+    $passButtons.forEach(function (el) {
+        $(el).click(() => {
+            var target = el.dataset.target;
+            toggle_Pass(target, el);
         });
     });
 }
 
 if ($modalCloses.length > 0) {
-    $modalCloses.forEach(function ($el) {
-        $el.addEventListener('click', function () {
+    $modalCloses.forEach(function (el) {
+        $(el).click(() => {
             closeModals();
         });
     });
@@ -73,8 +72,8 @@ function openModal(target) {
 
 function closeModals() {
     rootEl.classList.remove('is-clipped');
-    $modals.forEach(function ($el) {
-        $el.classList.remove('is-active');
+    $modals.forEach(function (el) {
+        el.classList.remove('is-active');
     });
 }
 
@@ -110,12 +109,10 @@ function prepareModal(target, link_id) {
 
 
     jqxhr.done(function (data, textStatus, jqXHR) {
-        console.log('Succeed:', data);
         var response_data = data["data"];
         $("#large_link").val(response_data["ll"]);
         $("#short_link").val(response_data["sl"]);
         $("#views_table").empty();
-        console.log(response_data["views"]);
 
         var state = response_data["is_active"];
         $("#status_button_control").empty();
@@ -127,34 +124,30 @@ function prepareModal(target, link_id) {
         }
         $(() => {
             $("#status_button").click(() => {
-                link_status(link_id)
+                link_status(link_id);
+            });
+            $("#delete_link_button").off()
+            $("#delete_link_button").click(() => {
+                delete_link(link_id);
             });
         });
-
+        $("#qr_code").attr("src", "https://api.qrserver.com/v1/create-qr-code/?size=128x128&data=" + response_data["sl"]);
 
         var views = response_data["views"];
         for (i in views) {
-            // console.log(view)
             $("#views_table").append("<tr><td>" + views[i]["ip"] + "</td><td>" + views[i]["time"] + "</td></tr>")
         }
-
-
         openModal(target)
-
     });
 
     jqxhr.fail(function (jqXHR, textStatus, errorThrown) {
         console.log('Failed:', errorThrown);
     });
-
-
 }
 
 function link_status(link_id) {
     $("#status_button").toggleClass("is-loading")
     var status = $("#status_button").data(status);
-
-    console.log(status)
 
     if (status["status"] == "on") {
         var data = { "id": link_id, "state": 0 };
@@ -190,10 +183,33 @@ function link_status(link_id) {
     jqxhr.fail(function (jqXHR, textStatus, errorThrown) {
         console.log('Failed:', errorThrown);
     });
-
-
-
 }
+
+function delete_link(link_id) {
+    $("#delete_link_button").toggleClass("is-loading")
+    var status = $("#status_button").data(status);
+    var data = { "id": link_id };
+
+    var jqxhr = $.ajax({
+        type: 'POST',
+        contentType: "application/json",
+        accepts: "application/json",
+        cache: false,
+        dataType: 'json',
+        data: JSON.stringify(data),
+        url: '/api/v1/delete_link',
+    });
+    jqxhr.done(function (data, textStatus, jqXHR) {
+        $("#delete_link_button").toggleClass("is-loading")
+        closeModals();
+        $("#link-id-" + link_id).remove()
+    });
+    jqxhr.fail(function (jqXHR, textStatus, errorThrown) {
+        console.log('Failed:', errorThrown);
+    });
+}
+
+
 
 function clipboard_click(target, button) {
     var copyText = document.getElementById(target);
@@ -209,4 +225,12 @@ function clipboard_click(target, button) {
         button.classList.remove("is-success");
         button.classList.add("fa-clipboard-list")
     }, 2000);
+}
+
+function toggle_Pass(target, button) {
+    $(button).toggleClass("fa-eye");
+    $(button).toggleClass("fa-eye-slash");
+    const type = $("#" + target).attr('type');
+    $("#" + target).attr(
+        'type', type === 'password' ? 'text' : 'password');
 }

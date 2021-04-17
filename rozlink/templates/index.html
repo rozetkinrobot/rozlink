@@ -40,6 +40,12 @@
                 </div>
                 <div class="message-body">
                     <a href="{{ config.SERVER_URI + '/' + reslink }}">{{ config.SERVER_URI + '/' + reslink }}</a>
+                    <div class="content">
+                        <figure class="image is-128x128">
+                            <img
+                                src="https://api.qrserver.com/v1/create-qr-code/?size=128x128&data={{ config.SERVER_URI + '/' + reslink }}">
+                        </figure>
+                    </div>
                 </div>
             </article>
             {% endif %}

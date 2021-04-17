@@ -21,6 +21,7 @@ class Link(db.Model):
     large_link = db.Column(db.String(1024))
     short_link = db.Column(db.String(256))
     is_active = db.Column(db.Boolean, default=True)
+    is_deleted = db.Column(db.Boolean, default=False)
     views = db.relationship("View", backref="link", lazy="dynamic")
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
