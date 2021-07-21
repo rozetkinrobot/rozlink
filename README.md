@@ -10,7 +10,7 @@ This is a simple link shortifier flask site writed with bulma
 * Link statistics
 * QR Code generating
 
-## Ussage
+## Usage
 1. Install requirements
 ```shell
 python3 -m pip intstall -r requirements.txt
