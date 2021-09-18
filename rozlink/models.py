@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 class View(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ip_address = db.Column(db.Integer)
+    ip_address = db.Column(db.String(20))
     link_id = db.Column(db.Integer, db.ForeignKey("link.id"))
     time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
@@ -35,7 +35,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
+    password = db.Column(db.String(120), nullable=False)
     links = db.relationship("Link", backref="user", lazy="dynamic")
     time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     is_admin = db.Column(db.Boolean, default=False)

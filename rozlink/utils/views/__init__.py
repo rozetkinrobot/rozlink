@@ -2,7 +2,7 @@ import netaddr
 
 
 def ip2int(ip: str):
-    return int(netaddr.IPAddress(ip))
+    return str(int(netaddr.IPAddress(ip)))
 
 
 def int2ip(ip: int):
