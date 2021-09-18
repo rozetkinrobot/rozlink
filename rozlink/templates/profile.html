@@ -6,7 +6,7 @@
             <div class="hero-body">
                 <div class="container">
                     <h1 class="title">
-                        Hello, {{ current_user.login }}.
+                        Hello, {{ current_user.login }}. {% if current_user.is_admin %} You are admin, i have some additional info for you){% endif %}
                     </h1>
                 </div>
             </div>
@@ -31,6 +31,26 @@
                         <p class="subtitle">Unique ip adresses</p>
                     </article>
                 </div>
+                {% if current_user.is_admin %}
+                <div class="tile is-parent">
+                    <article class="tile is-child box">
+                        <p class="title">{{ admin_total_links }}</p>
+                        <p class="subtitle">All links</p>
+                    </article>
+                </div>
+                <div class="tile is-parent">
+                    <article class="tile is-child box">
+                        <p class="title">{{ admin_total_views }}</p>
+                        <p class="subtitle">All views</p>
+                    </article>
+                </div>
+                <div class="tile is-parent">
+                    <article class="tile is-child box">
+                        <p class="title">{{ admin_total_users }}</p>
+                        <p class="subtitle">Registered users</p>
+                    </article>
+                </div>
+                {% endif %}
             </div>
         </section>
     </div>

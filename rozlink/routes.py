@@ -134,13 +134,21 @@ def profile():
     total_links = len(links)
     total_views = 0
     ips = []
+    if current_user.is_admin:
+        admin_total_links = Link.query.count()
+        admin_total_views = View.query.count()
+        admin_total_users = User.query.count()
+    else:
+        admin_total_links = 0
+        admin_total_views = 0
+        admin_total_users = 0
     for link in links:
         total_views += len(link.views.all())
         for view in link.views.all():
             ips.append(view.ip_address)
     unique_ips = len(list(set(ips)))
 
-    return render_template("profile.html", links=links, total_links=total_links, total_views=total_views, unique_ips=unique_ips)
+    return render_template("profile.html", links=links, total_links=total_links, total_views=total_views, unique_ips=unique_ips, admin_total_links=admin_total_links, admin_total_views=admin_total_views, admin_total_users=admin_total_users)
 
 
 @app.route('/logout')
