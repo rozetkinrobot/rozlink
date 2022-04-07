@@ -35,6 +35,8 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    telegram_id = db.Column(db.Integer, unique=True, default=None)
+    telegram_token = db.Column(db.String(256), unique=True, default=None)
     password = db.Column(db.String(120), nullable=False)
     links = db.relationship("Link", backref="user", lazy="dynamic")
     time = db.Column(db.DateTime, default=datetime.datetime.utcnow)

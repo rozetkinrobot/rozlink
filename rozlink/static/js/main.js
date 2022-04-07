@@ -134,7 +134,8 @@ function prepareModal(target, link_id) {
         $("#qr_code").attr("src", "https://api.qrserver.com/v1/create-qr-code/?size=128x128&data=" + response_data["sl"]);
 
         var views = response_data["views"];
-        for (i in views) {
+        $("#total_views").text(views.length);
+        for (i in views.reverse()) {
             $("#views_table").append("<tr><td>" + views[i]["ip"] + "</td><td>" + views[i]["time"] + "</td></tr>")
         }
         openModal(target)

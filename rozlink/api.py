@@ -1,16 +1,14 @@
 from rozlink import app, db
-import netaddr
-from flask import request, redirect, abort, render_template, url_for, jsonify
-from flask_login import login_user, login_required, logout_user, current_user
-from rozlink.forms import LoginForm, RegisterForm, LinkForm
-from rozlink.models import User, Link, View
-from rozlink.utils.links import create_unique_link
-from rozlink.utils.views import ip2int
-import json
+from flask import request, jsonify
+from flask_login import current_user
+from rozlink.models import Link
 
 
-def get_error(error):
-    return {"success": False, "reason": error}
+def get_error(error, str_err=None):
+    if app.config["DEBUG"] == "True":
+        return {"success": False, "reason": error, "str_err": str(str_err)}
+    else:
+        return {"success": False, "reason": error}
 
 
 def get_success(data):
@@ -29,14 +27,14 @@ def link_info():
             if link.is_deleted:
                 return jsonify(get_error("Link deleted")), 403
             return get_success(link.toJson())
-        except TypeError:
-            return jsonify(get_error(400)), 400
-        except AttributeError:
-            return jsonify(get_error(400)), 400
-        except KeyError:
-            return jsonify(get_error(400)), 400
-        except ValueError:
-            return jsonify(get_error(400)), 400
+        except TypeError as e:
+            return jsonify(get_error(400, e)), 400
+        except AttributeError as e:
+            return jsonify(get_error(400, e)), 400
+        except KeyError as e:
+            return jsonify(get_error(400, e)), 400
+        except ValueError as e:
+            return jsonify(get_error(400, e)), 400
 
     return jsonify(get_error(401)), 401
 

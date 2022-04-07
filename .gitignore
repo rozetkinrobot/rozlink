@@ -123,6 +123,8 @@ ENV/
 env.bak/
 venv.bak/
 pythonenv*
+rozlinkvenv
+migrations
 
 # Spyder project settings
 .spyderproject
@@ -153,3 +155,6 @@ Thumbs.db
 
 # profiling data
 .prof
+
+# certs
+*.pem

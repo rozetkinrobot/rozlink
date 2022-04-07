@@ -72,7 +72,7 @@
                     <div class="table-container">
                         <table class="table is-fullwidth is-striped is-hoverable">
                             <tbody>
-                                {% for link in links %}
+                                {% for link in links[::-1] %}
                                 <tr id="link-id-{{ link.id }}">
                                     <td width="5%"><i class="fa fa-link"></i></td>
                                     <td>
@@ -149,6 +149,7 @@
 
                                         <div class="field">
                                             <label class="label">Views</label>
+					    <div class="button" id="total_views"></div>
                                             <div class="control">
                                                 <div class="table-container">
                                                     <table class="table is-fullwidth is-striped is-hoverable">
@@ -187,9 +188,6 @@
         </div>
     </div>
 </div>
-<!-- <script async type="text/javascript" src="../js/bulma.js"></script> -->
 {% endblock %} {% block js_scripts %}
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-<!-- <script src="{{ url_for('static', filename='js/particles-min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/p-config.js') }}"></script> -->
 {% endblock %}

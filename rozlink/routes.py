@@ -1,13 +1,14 @@
 from rozlink import app, db, login_manager
-import netaddr
 import os
-from flask import request, redirect, abort, render_template, url_for, send_from_directory, session, jsonify
+from flask import request, redirect, abort, render_template, url_for, send_from_directory, session
 from flask_login import login_user, login_required, logout_user, current_user
 from rozlink.forms import LoginForm, RegisterForm, LinkForm, ChangePassForm
 from rozlink.models import User, Link, View
 from rozlink.utils.links import create_unique_link, is_safe_url
-from rozlink.utils.views import ip2int
+from rozlink.utils.views import ip2int, int2ip
 
+if app.config["HAS_TELEGRAM_BOT"]:
+    from rozlink.telegram_bot import send_view
 
 def redirect_dest(fallback):
     dest = request.args.get('next')
@@ -43,7 +44,7 @@ def index():
             db.session.commit()
 
             return render_template("index.html", form=form, reslink=dblink.short_link)
-        return render_template("index.html", form=form, reslink=None, errors=["URL lenght must not be 0..."])
+        return render_template("index.html", form=form, reslink=None, errors=["URL length must not be 0..."])
     return render_template('index.html', form=form, reslink=None, errors=form.error_list)
 
 
@@ -57,6 +58,14 @@ def short_link_redir(short_link):
         dblink.views.append(new_view)
         db.session.add(dblink)
         db.session.commit()
+
+        db_user = User.query.filter_by(id=dblink.user_id).first()
+        if app.config["HAS_TELEGRAM_BOT"]:
+            if db_user:
+                if db_user.telegram_id:
+                    send_view(db_user.telegram_id, dblink.short_link, int2ip(
+                        new_view.ip_address), views_count=dblink.views.count())
+
         return redirect(dblink.large_link)
     abort(404)
 
@@ -171,3 +180,8 @@ def handle_needs_login():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db.session.remove()
